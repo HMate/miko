@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  datastore:
+    image: postgres:12.4
+    environment:
+      POSTGRES_PASSWORD: mikopass
+    volumes :
+      - miko-data:/var/lib/postgresql/data
+    ports:
+      - 8001:5432
+  miko:
+    image: python:3.8.5-slim-buster
+    working_dir: /miko
+    volumes:
+      - ./miko:/miko
+    command: python miko.py
+
+volumes:
+  miko-data:
