@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   datastore:
-    image: postgres:12.4
+    image: miko-datastore
+    build: datastore
     environment:
       POSTGRES_PASSWORD: mikopass
     volumes :
