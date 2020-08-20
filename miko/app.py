@@ -2,6 +2,7 @@ import os
 
 import flask
 import flask_sqlalchemy
+import sqlalchemy.exc
 import utils
 
 
@@ -21,6 +22,24 @@ def books(uid=-1):
         res = db.engine.execute("select * from books")
         rows = [dict(row) for row in res]
     return flask.jsonify(rows)
+
+
+@app.route('/book/insert', methods=["POST"])
+def book_insert():
+    data = flask.request.json
+    print(data)
+
+    try:
+        db.engine.execute("INSERT INTO books(title, publisher, publish_year, author, acquire_date, issue_count) VALUES" +
+                          "(%(title)s, %(publisher)s, %(publish_year)s, %(author)s, %(acquire_date)s, %(issue_count)s)",
+                          **data)
+    except (sqlalchemy.exc.DataError) as e:
+        print("ERROR in book_insert: {}".format(e))
+        return "Failed because: {}".format(e.orig)
+    except KeyError as e:
+        print("ERROR in book_insert: {}".format(e))
+        return "Failed because missing property {}".format(e)
+    return "New books inserted"
 
 
 @app.route('/stat/<string:stat_name>')
