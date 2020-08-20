@@ -1,4 +1,4 @@
-INSERT INTO public.books(
+INSERT INTO books(
 	title, publisher, publish_year, author, acquire_date, issue_count) VALUES
 	('The Martian Chronicles', 'Simon & Schuster', 2012, 'Ray Bradbury', '2015-06-12', 2),
 	('The Martian Chronicles', 'Bantam/Spectra', 1984, 'Ray Bradbury', '2014-05-26', 1),

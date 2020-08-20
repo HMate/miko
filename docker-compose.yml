@@ -11,11 +11,17 @@ services:
     ports:
       - 8001:5432
   miko:
-    image: python:3.8.5-slim-buster
+    image: miko-app
+    build: miko
     working_dir: /miko
+    depends_on:
+      - datastore
+    environment:
+      MIKO_DB_CONNSTRING: postgresql://postgres:mikopass@datastore:5432
     volumes:
       - ./miko:/miko
-    command: python miko.py
+    ports:
+      - 5000:5000
 
 volumes:
   miko-data:

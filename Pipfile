@@ -6,7 +6,9 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-sqlalchemy = "==1.3.18"
+psycopg2-binary = "*"
+flask = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.8"
