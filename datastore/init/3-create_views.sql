@@ -22,7 +22,7 @@ UNION
 (SELECT 'youngest', title, acquire_date FROM books order by acquire_date desc limit 1);
 
 CREATE MATERIALIZED VIEW author_books_until_year AS
-SELECT year, author, MAX(book_count) FROM (
+SELECT year, author, MAX(book_count) as books FROM (
 	SELECT extract(year from acquire_date)::smallint AS year, author,
 	SUM(issue_count) OVER (PARTITION BY author order by acquire_date) AS book_count
 	FROM books) as books_per_year

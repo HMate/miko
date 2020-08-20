@@ -6,7 +6,9 @@ INSERT INTO books(
 	('Fahrenheit 451', 'Simon & Schuster', 2011, 'Ray Bradbury', '2013-11-04', 3),
 	('The Psychology of Computer Programming', 'Dorset House Publishing Co', 2005, 'Gerald M. Weinberg', '2018-02-24', 2),
 	('The Mythical Man-Month', 'Addison-Wesley Professional', 1995, 'Frederick P. Brooks Jr.', '2017-03-19', 4),
-	('Of Mice and Men', 'Penguin Books', 2002, 'John Steinbeck.', '2015-06-12', 3),
-	('Of Mice and Men', 'Penguin Books', 2002, 'John Steinbeck.', '2018-01-25', 2),
-	('East of Eden', 'Penguin Books', 2002, 'John Steinbeck.', '2013-06-12', 5),
-	('The Grapes of Wrath', 'Penguin Books', 2006, 'John Steinbeck.', '2017-01-25', 2);
+	('Of Mice and Men', 'Penguin Books', 2002, 'John Steinbeck', '2015-06-12', 3),
+	('Of Mice and Men', 'Penguin Books', 2002, 'John Steinbeck', '2018-01-25', 2),
+	('East of Eden', 'Penguin Books', 2002, 'John Steinbeck', '2013-06-12', 5),
+	('The Grapes of Wrath', 'Penguin Books', 2006, 'John Steinbeck', '2017-01-25', 2),
+	('Száll a kakukk fészkére', 'Európa könyvkiadó', 2018, 'Ken Kesey', '2019-07-13', 3)
+	;
