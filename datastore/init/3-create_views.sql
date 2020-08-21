@@ -17,9 +17,9 @@ SELECT justify_interval((current_date - avg_acquire) * interval '1 days') as age
 FROM average_acquire_date;
 
 CREATE MATERIALIZED VIEW oldest_youngest_books AS
-(SELECT 'oldest', title, acquire_date FROM books order by acquire_date asc limit 1)
+(SELECT 'oldest' as tag, title, acquire_date FROM books order by acquire_date asc limit 1)
 UNION
-(SELECT 'youngest', title, acquire_date FROM books order by acquire_date desc limit 1);
+(SELECT 'youngest' as tag, title, acquire_date FROM books order by acquire_date desc limit 1);
 
 CREATE MATERIALIZED VIEW author_books_until_year AS
 SELECT year, author, MAX(book_count) as books FROM (

@@ -2,9 +2,9 @@ Miko - micro library application
 
 ### REST api: 
 
-http://127.0.0.1:5000/book : Returns all the book acquisitions in the database
-http://127.0.0.1:5000/book/9 : Returns book acquisition with unique identifier 9  
-http://127.0.0.1:5000/book/insert : Inserts a new book acquisition. Have to include the properties in a json body 
+http://127.0.0.1:5000/books : Returns all the book acquisitions in the database
+http://127.0.0.1:5000/books/9 : Returns book acquisition with unique identifier 9  
+http://127.0.0.1:5000/books/insert : Inserts a new book acquisition. Have to include the properties in a json body 
 
 http://127.0.0.1:5000/stat/average_books_age
 http://127.0.0.1:5000/stat/author_book_count
@@ -29,5 +29,5 @@ PS C:\> $body = @"
  "issue_count": "4"
  }
  "@
-PS C:\> Invoke-RestMethod http://127.0.0.1:5000/book/insert -Method POST -Body $body -ContentType 'application/json'
+PS C:\> Invoke-RestMethod http://127.0.0.1:5000/books/insert -Method POST -Body $body -ContentType 'application/json'
 ```

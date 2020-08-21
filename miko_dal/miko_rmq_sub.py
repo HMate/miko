@@ -13,24 +13,71 @@ import pika.exceptions
 import sqlalchemy
 import sqlalchemy.exc
 
+import utils
 
-def on_msg(ch, method, props, body):
-    print("Got %s" % body, flush=True)
+
+def query_books(ch, method, props, body):
+    print("Incoming query_books message {}".format(body), flush=True)
+    uid = int(body)
+    if uid >= 0:
+        res = engine.execute("select * from books where uid = %(uid)s", uid=uid)
+        rows = [dict(row) for row in res]
+    else:
+        res = engine.execute("select * from books")
+        rows = [dict(row) for row in res]
+
+    result = json.dumps(rows, cls=utils.MikoJsonEncoder)
+
+    send_rpc_result(ch, method, props, result)
 
 
 def insert_book(ch, method, props, body):
+    print("Incoming insert_book message {}".format(body), flush=True)
     data = json.loads(body)
+    result = "New books inserted"
     try:
         engine.execute("INSERT INTO books(title, publisher, publish_year, author, acquire_date, issue_count) VALUES" +
                           "(%(title)s, %(publisher)s, %(publish_year)s, %(author)s, %(acquire_date)s, %(issue_count)s)",
                           **data)
     except sqlalchemy.exc.DataError as e:
         print("ERROR in book_insert: {}".format(e))
-        return "Failed because: {}".format(e.orig)
+        result = "Failed because: {}".format(e.orig)
     except KeyError as e:
         print("ERROR in book_insert: {}".format(e))
-        return "Failed because missing property {}".format(e)
-    return "New books inserted"
+        result = "Failed because missing property {}".format(e)
+
+    send_rpc_result(ch, method, props, result)
+
+
+def stat(ch, method, props, body:bytes):
+    print("Incoming stat message {}".format(body), flush=True)
+    allowed_stats = [
+        "average_books_age",
+        "author_book_count",
+        "publisher_book_count",
+        "oldest_youngest_books",
+        "author_books_until_year",
+        "author_average_acquire",
+        "author_third_book_issues"
+    ]
+    rows = []
+    stat_name = body.decode("UTF8")
+    if stat_name in allowed_stats:
+        # We whitelist table names to protect against sql injection
+        query = "select * from " + stat_name
+        res = engine.execute(query)
+        rows = [dict(row) for row in res]
+    result = json.dumps(rows, cls=utils.MikoJsonEncoder)
+    send_rpc_result(ch, method, props, result)
+
+
+def send_rpc_result(ch, method, props, result):
+    print("Sending result {}".format(result), flush=True)
+    ch.basic_publish(exchange='',
+                     routing_key=props.reply_to,
+                     properties=pika.BasicProperties(correlation_id=props.correlation_id),
+                     body=str(result))
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 def start_rabbit_listener():
@@ -38,11 +85,16 @@ def start_rabbit_listener():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="miko_mq"))
     channel: pika.adapters.blocking_connection.BlockingChannel = connection.channel()
 
-    queue_map = {"miko_msg": on_msg}
-    for queue, handler in queue_map.items():
+    rpc_queue_map = {
+        "miko.book.query": query_books,
+        "miko.book.insert": insert_book,
+        "miko.stat": stat
+    }
+    for queue, handler in rpc_queue_map.items():
         channel.queue_declare(queue=queue)
-        channel.basic_consume(queue=queue, on_message_callback=handler, auto_ack=True)
+        channel.basic_consume(queue=queue, on_message_callback=handler)
 
+    channel.basic_qos(prefetch_count=1)
     print('Waiting for messages from miko. To exit press CTRL+C')
     channel.start_consuming()
 
