@@ -4,12 +4,28 @@ import flask
 import flask_sqlalchemy
 import sqlalchemy.exc
 import utils
+import pika
 
 
 app = flask.Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["MIKO_DB_CONNSTRING"]
 app.json_encoder = utils.MikoJsonEncoder
 db = flask_sqlalchemy.SQLAlchemy(app)
+
+
+@app.route('/test')
+@app.route('/test/<int:num>')
+def test(num):
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host='miko_mq'))
+    channel = connection.channel()
+
+    channel.queue_declare(queue='miko_msg')
+
+    channel.basic_publish(exchange='', routing_key='miko_msg', body='Hello Miko Database %s!'%num)
+    print(" [x] Sent 'Hello Miko %s!'" % num)
+    connection.close()
+    return "OK"
 
 
 @app.route('/book')

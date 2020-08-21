@@ -10,6 +10,7 @@ psycopg2-binary = "*"
 flask = "*"
 flask-sqlalchemy = "*"
 sqlalchemy = "*"
+pika = "*"
 
 [requires]
 python_version = "3.8"
