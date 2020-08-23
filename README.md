@@ -1,4 +1,6 @@
-#Miko - micro library application 
+# Miko - micro library application 
+
+A library application based on a micro service design.
 
 To start the application run `docker-compose up` from the root directory. 
 This will start the web service. 
@@ -63,9 +65,9 @@ PS C:\> $body = [System.Text.Encoding]::UTF8.GetBytes(@"
 PS C:\> Invoke-RestMethod http://127.0.0.1:5000/books/insert -Method POST -Body $body -ContentType 'application/json'
 ```
 
-###For developers:
+### For developers:
 
-####Architecture
+#### Architecture
 The application consists of 4 docker images: miko-app, miko-dal, miko-datastore and rabbitmq.<br>
 miko-app is a web service which implements the miko rest api. 
 It communicates with the database through the rabbitmq message broker server. 
