@@ -3,11 +3,17 @@ version: '3.8'
 services:
   miko_mq:
     image: rabbitmq:3.8.7
+    ports:
+      - 5672:5672
   datastore:
     image: miko-datastore
     build: datastore
     environment:
       POSTGRES_PASSWORD: mikopass
+    volumes :
+      - miko-data:/var/lib/postgresql/data
+    ports:
+      - 8001:5432
   miko_dal:
     image: miko-dal
     build: miko_dal
@@ -17,6 +23,8 @@ services:
       - miko_mq
     environment:
       MIKO_DB_CONNSTRING: postgresql://postgres:mikopass@datastore:5432
+    volumes:
+      - ./miko_dal:/miko_dal
   miko:
     image: miko-app
     build: miko
@@ -26,5 +34,10 @@ services:
       - miko_mq
     environment:
       MIKO_MQ_HOST: miko_mq
+    volumes:
+      - ./miko:/miko
     ports:
       - 5000:5000
+
+volumes:
+  miko-data:

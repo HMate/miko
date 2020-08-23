@@ -18,13 +18,17 @@ import utils
 
 def query_books(ch, method, props, body):
     print("Incoming query_books message {}".format(body), flush=True)
-    uid = int(body)
-    if uid >= 0:
-        res = engine.execute("select * from books where uid = %(uid)s", uid=uid)
+    try:
+        data = json.loads(body)
+        where = utils.to_sql_where_constraint(
+            data, like_columns=["author", "publisher", "title", "acquire_date"])
+        query = "select * from books{}".format(where)
+        print("Running query: {}".format(query))
+        res = engine.execute(query, **data)
         rows = [dict(row) for row in res]
-    else:
-        res = engine.execute("select * from books")
-        rows = [dict(row) for row in res]
+    except Exception as e:
+        print("Got error in query_books: {}".format(e))
+        rows = []
 
     result = json.dumps(rows, cls=utils.MikoJsonEncoder)
 

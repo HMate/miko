@@ -4,7 +4,8 @@ FROM books
 GROUP BY author;
 
 CREATE MATERIALIZED VIEW publisher_book_count AS
-SELECT publisher, SUM(issue_count) as book_count FROM books
+SELECT publisher, SUM(issue_count) as book_count
+FROM books
 GROUP by publisher;
 
 CREATE MATERIALIZED VIEW average_acquire_date AS
@@ -36,10 +37,11 @@ SELECT author, justify_interval(AVG(acquire_date - publish_year) * interval '1 d
 GROUP BY author;
 
 CREATE MATERIALIZED VIEW author_third_book_issues AS
-SELECT author, title, issue_count from books
+SELECT author, title, issue_count
+FROM books
 INNER JOIN (
 	SELECT NTH_VALUE(uid, 3) OVER (PARTITION BY author order by publish_year) AS third_book_uid
-	from books
+	FROM books
 ) as B2 ON (B2.third_book_uid = uid)
 where B2.third_book_uid IS NOT NULL
 	GROUP BY author, title, issue_count;

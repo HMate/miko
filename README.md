@@ -19,7 +19,7 @@ http://127.0.0.1:5000/stat/author_third_book_issues
 
 In powershell:
 ```
-PS C:\> $body = @"
+PS C:\> $body = [System.Text.Encoding]::UTF8.GetBytes(@"
  {
  "title": "Good Omens",
  "publisher": "William Morrow",
@@ -28,6 +28,6 @@ PS C:\> $body = @"
  "acquire_date": "2020-08-20",
  "issue_count": "4"
  }
- "@
+"@)
 PS C:\> Invoke-RestMethod http://127.0.0.1:5000/books/insert -Method POST -Body $body -ContentType 'application/json'
 ```
